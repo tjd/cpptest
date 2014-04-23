@@ -135,7 +135,8 @@ public:
 
   void equal(const string& name, int expected, int actual) {
     string result = assert(name, expected == actual);
-    cout << "  " << result << " equality test " << to_pair(expected, actual) << endl;
+    cout << "  " << result << " equality test " 
+         << to_pair(expected, actual) << endl;
   }
 
   void not_equal(int expected, int actual) {
@@ -144,7 +145,8 @@ public:
 
   void not_equal(const string& name, int expected, int actual) {
     string result = assert(name, expected != actual);    
-    cout << "  " << result << " inequality test " << to_pair(expected, actual) << endl;
+    cout << "  " << result << " inequality test " 
+         << to_pair(expected, actual) << endl;
   }
 
   void equal_str(const string& expected, const string& actual) { 
