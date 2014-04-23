@@ -6,17 +6,27 @@
 #include <map>
 #include <stdio.h>
 
+//
 // TODO: Add a "completed" flag to Test_suite? Might help avoid errors due to
 //       testing a completed suite.
 // TODO: Add has_active_test to Test_master to throw an error if there is 
 //       no active test? Might produce nicer error messages.
+//
 
 using namespace std;
 
-namespace cpptest {
+//////////////////////////////////////////////////////////////////////////
+//
+// Helper functions.
+//
+//////////////////////////////////////////////////////////////////////////
 
-inline void error(const string& s) {
-  throw runtime_error(s);
+void error(const string& msg) {
+  throw runtime_error(msg);
+}
+
+void error_if(bool b, const string& msg) {
+  if (b) error(msg);
 }
 
 template<class T> string to_str(const T& x) {
@@ -25,13 +35,19 @@ template<class T> string to_str(const T& x) {
   return os.str();
 }
 
-template<class T> string pair(T a, T b) {
+template<class T> string to_pair(T a, T b) {
   return "(" + to_str(a) + ", " + to_str(b) + ")";
 }
 
 string quote(const string& x) {
   return "\"" + x + "\"";
 }
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Test suite class.
+//
+//////////////////////////////////////////////////////////////////////////
 
 class Test_suite {
 public:
@@ -49,16 +65,22 @@ public:
     { } 
 };
 
+//////////////////////////////////////////////////////////////////////////
+//
+// Test master class.
+//
+//////////////////////////////////////////////////////////////////////////
+
 class Test_master {
   map<string, Test_suite> stats;
   string active_test;
 
   void has_test(const string& name) {
-    if (stats.count(name) == 0) error("no such test: " + quote(name));
+    error_if(stats.count(name) == 0, "no such test: " + quote(name));
   }
 
   void lacks_test(const string& name) {
-    if (stats.count(name) > 0) error("duplicate test: " + quote(name));
+    error_if(stats.count(name) > 0, "duplicate test: " + quote(name));
   }
 
 public:
@@ -66,7 +88,7 @@ public:
 
   void new_test(const string& name) {
     lacks_test(name);
-    if (name == "") error("test name cannot be empty string");
+    error_if(name == "", "test name cannot be empty string");
     stats.emplace(name, Test_suite(name));
     cout << "\nTest " << quote(name) << " created ..." << endl;
     active_test = name;
@@ -119,7 +141,7 @@ public:
       stats[name].failed++;
       result = "FAILED";
     }
-    cout << "  " << result << " equality test " << pair(expected, actual) << endl;
+    cout << "  " << result << " equality test " << to_pair(expected, actual) << endl;
   }
 
   void not_equal(int expected, int actual) {
@@ -138,7 +160,7 @@ public:
       stats[name].failed++;
       result = "FAILED";    
     }
-      cout << "  " << result << " equality test " << pair(expected, actual) << endl;
+      cout << "  " << result << " equality test " << to_pair(expected, actual) << endl;
   }
 
   void equal_str(const string& expected, const string& actual) { 
@@ -157,7 +179,7 @@ public:
       result = "FAILED";
     }
     cout << "  " << result << " string equality test " 
-         << pair(quote(expected), quote(actual)) << endl;
+         << to_pair(quote(expected), quote(actual)) << endl;
   }
 
   void display_all_stats() {
@@ -204,7 +226,5 @@ public:
   }
 
 }; // class Test_master
-
-} // namespace cpptest
 
 #endif

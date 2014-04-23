@@ -11,3 +11,10 @@
 #   -Wnon-virtual-dtor warns about non-virtual destructors
 #   -g puts debugging info into the executables (makes them larger)
 CPPFLAGS = -std=c++11 -Wall -Wextra -Werror -Wfatal-errors -Wno-sign-compare -Wnon-virtual-dtor -g
+
+all: tests
+
+tests: test1 test2
+
+clean:
+	rm -f test1 test2
