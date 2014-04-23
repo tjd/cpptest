@@ -83,6 +83,18 @@ class Test_master {
     error_if(stats.count(name) > 0, "duplicate test: " + quote(name));
   }
 
+  string assert(const string& name, bool expr) {
+    has_test(name);
+    stats[name].attempted++;
+    if (expr) {
+      stats[name].passed++;
+      return "PASSED";
+    } else {
+      stats[name].failed++;
+      return "FAILED";
+    }
+  }
+
 public:
   Test_master() : stats(), active_test("") { }
 
@@ -113,16 +125,7 @@ public:
   }
 
   void is_true(const string& name, bool expr) {
-    has_test(name);
-    string result;
-    stats[name].attempted++;
-    if (expr) {
-      stats[name].passed++;
-      result = "PASSED";
-    } else {
-      stats[name].failed++;
-      result = "FAILED";
-    }
+    string result = assert(name, expr);
     cout << "  " << result << " is_true test " << endl;
   }
 
@@ -131,16 +134,7 @@ public:
   }
 
   void equal(const string& name, int expected, int actual) {
-    has_test(name);
-    string result;
-    stats[name].attempted++;
-    if (expected == actual) {
-      stats[name].passed++;
-      result = "PASSED";
-    } else {
-      stats[name].failed++;
-      result = "FAILED";
-    }
+    string result = assert(name, expected == actual);
     cout << "  " << result << " equality test " << to_pair(expected, actual) << endl;
   }
 
@@ -149,18 +143,8 @@ public:
   }
 
   void not_equal(const string& name, int expected, int actual) {
-    has_test(name);
-
-    string result;
-    stats[name].attempted++;
-    if (expected != actual) {
-      stats[name].passed++;
-      result = "PASSED";
-    } else {
-      stats[name].failed++;
-      result = "FAILED";    
-    }
-      cout << "  " << result << " equality test " << to_pair(expected, actual) << endl;
+    string result = assert(name, expected != actual);    
+    cout << "  " << result << " inequality test " << to_pair(expected, actual) << endl;
   }
 
   void equal_str(const string& expected, const string& actual) { 
@@ -168,16 +152,7 @@ public:
   }
 
   void equal_str(const string& name, const string& expected, const string& actual) {
-    has_test(name);
-    string result;
-    stats[name].attempted++;
-    if (expected == actual) {
-      stats[name].passed++;
-      result = "PASSED";
-    } else {
-      stats[name].failed++;
-      result = "FAILED";
-    }
+    string result = assert(name, expected == actual);
     cout << "  " << result << " string equality test " 
          << to_pair(quote(expected), quote(actual)) << endl;
   }
