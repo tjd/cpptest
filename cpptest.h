@@ -6,13 +6,6 @@
 #include <map>
 #include <stdio.h>
 
-//
-// TODO: Add a "completed" flag to Test_suite? Might help avoid errors due to
-//       testing a completed suite.
-// TODO: Add has_active_test to Test_master to throw an error if there is 
-//       no active test? Might produce nicer error messages.
-//
-
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,13 +48,16 @@ public:
   int attempted;
   int passed;
   int failed;
+  bool completed;
 
   Test_suite() 
-    : name("<test-with-no-name>"), attempted(0), passed(0), failed(0)
+    : name("<test-with-no-name>"), attempted(0), passed(0), failed(0), 
+      completed(false)
     { }
 
   Test_suite(const string& name) 
-    : name(name), attempted(0), passed(0), failed(0) 
+    : name(name), attempted(0), passed(0), failed(0), 
+      completed(false)
     { } 
 };
 
@@ -85,6 +81,7 @@ class Test_master {
 
   string assert(const string& name, bool expr) {
     has_test(name);
+    error_if(stats[name].completed, "test suite " + quote(name) + " completed");
     stats[name].attempted++;
     if (expr) {
       stats[name].passed++;
@@ -107,6 +104,7 @@ public:
   }
 
   void test_completed() {
+    has_active_test();
     test_completed(active_test);
   }
 
@@ -115,12 +113,18 @@ public:
     int attempted = stats[name].attempted;
     int passed = stats[name].passed;
     int failed = stats[name].failed;
-    printf("... test \"%s\" completed", name.c_str());
+    stats[name].completed = true;
+    printf("... test \"%s\" completed ", name.c_str());
     printf("(%d attempted, %d passed, %d failed)\n", attempted, passed, failed);
     active_test = "";
   }
 
+  void has_active_test() {
+    error_if(active_test == "", "no active test");
+  }
+
   void is_true(bool expr) {
+    has_active_test();
     is_true(active_test, expr); 
   }
 
@@ -129,7 +133,18 @@ public:
     cout << "  " << result << " is_true test " << endl;
   }
 
+  void is_false(bool expr) {
+    has_active_test();
+    is_false(active_test, expr); 
+  }
+
+  void is_false(const string& name, bool expr) {
+    string result = assert(name, !expr);
+    cout << "  " << result << " is_false test " << endl;
+  }
+
   void equal(int expected, int actual) {
+    has_active_test();
     equal(active_test, expected, actual); 
   }
 
@@ -140,6 +155,7 @@ public:
   }
 
   void not_equal(int expected, int actual) {
+    has_active_test();
     not_equal(active_test, expected, actual); 
   }
 
@@ -149,7 +165,8 @@ public:
          << to_pair(expected, actual) << endl;
   }
 
-  void equal_str(const string& expected, const string& actual) { 
+  void equal_str(const string& expected, const string& actual) {
+    has_active_test();
     equal_str(active_test, expected, actual); 
   }
 
