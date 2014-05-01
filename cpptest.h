@@ -199,12 +199,12 @@ public:
 
   void equal_double(double expected, double actual) {
     has_active_test();
-    equal_int(active_test, expected, actual); 
+    equal_double(active_test, expected, actual); 
   }
 
   void equal_double(const string& name, double expected, double actual) {
     string result = assert(name, expected == actual);
-    print_msg(string("double equality test"), result, expected, actual);
+    print_msg("double equality test", result, expected, actual);
   }
 
   void not_equal_double(double expected, double actual) {
@@ -214,7 +214,7 @@ public:
 
   void not_equal_double(const string& name, double expected, double actual) {
     string result = assert(name, expected != actual);   
-    print_msg(string("double inequality test"), result, expected, actual); 
+    print_msg("double inequality test", result, expected, actual); 
   }
 
   ////////////////////////////////////////////////////////////////
