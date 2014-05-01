@@ -34,8 +34,8 @@ int twice(int x) {
 void twice_test() {
     master.new_test("twice");
 
-    master.equal(4, twice(2));
-    master.not_equal(4, twice(3));
+    master.equal_int(4, twice(2));
+    master.not_equal_int(4, twice(3));
     
     master.test_completed();
 }

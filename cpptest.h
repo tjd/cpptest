@@ -8,6 +8,8 @@
 
 using namespace std;
 
+namespace cpptest {
+
 //////////////////////////////////////////////////////////////////////////
 //
 // Helper functions.
@@ -28,12 +30,40 @@ template<class T> string to_str(const T& x) {
   return os.str();
 }
 
-template<class T> string to_pair(T a, T b) {
+template<class T> string to_pair(const T& a, const T& b) {
   return "(" + to_str(a) + ", " + to_str(b) + ")";
+}
+
+template<class T>
+void print_msg(const string& msg, const string& result,
+               const T& expected, const T& actual) {
+      cout << "  " << result << ' ' << msg << ' '
+           << to_pair(expected, actual) << endl;  
 }
 
 string quote(const string& x) {
   return "\"" + x + "\"";
+}
+
+// Initialize the random number generator with a random seed based on the
+// current time.
+void randomize() {
+  srand(time(NULL));
+}
+
+// Returns a random int n such that 0 <= n < max. It's important to note that
+// the returned number will never be equal to max. For example, the biggest
+// value randint(6) will return is 5 (not 6).
+int randint(int max) { 
+  return rand() % max; 
+}
+
+// Returns a random int n such that min <= n < max It's important to note that
+// the returned number might be equal to min, but will never be equal to max.
+// For example, randint(5, 10) might return 5, but it would never return 10
+// (the biggest value it can return is 9).
+int randint(int min, int max) { 
+  return randint(max - min) + min; 
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -143,27 +173,51 @@ public:
     cout << "  " << result << " is_false test " << endl;
   }
 
-  void equal(int expected, int actual) {
+  ////////////////////////////////////////////////////////////////
+
+  void equal_int(int expected, int actual) {
     has_active_test();
-    equal(active_test, expected, actual); 
+    equal_int(active_test, expected, actual); 
   }
 
-  void equal(const string& name, int expected, int actual) {
+  void equal_int(const string& name, int expected, int actual) {
     string result = assert(name, expected == actual);
-    cout << "  " << result << " equality test " 
-         << to_pair(expected, actual) << endl;
+    print_msg(string("int equality test"), result, expected, actual);
   }
 
-  void not_equal(int expected, int actual) {
+  void not_equal_int(int expected, int actual) {
     has_active_test();
-    not_equal(active_test, expected, actual); 
+    not_equal_int(active_test, expected, actual); 
   }
 
-  void not_equal(const string& name, int expected, int actual) {
+  void not_equal_int(const string& name, int expected, int actual) {
     string result = assert(name, expected != actual);    
-    cout << "  " << result << " inequality test " 
-         << to_pair(expected, actual) << endl;
+    print_msg(string("int inequality test"), result, expected, actual);    
   }
+
+  ////////////////////////////////////////////////////////////////
+
+  void equal_double(double expected, double actual) {
+    has_active_test();
+    equal_int(active_test, expected, actual); 
+  }
+
+  void equal_double(const string& name, double expected, double actual) {
+    string result = assert(name, expected == actual);
+    print_msg(string("double equality test"), result, expected, actual);
+  }
+
+  void not_equal_double(double expected, double actual) {
+    has_active_test();
+    not_equal_double(active_test, expected, actual); 
+  }
+
+  void not_equal_double(const string& name, double expected, double actual) {
+    string result = assert(name, expected != actual);   
+    print_msg(string("double inequality test"), result, expected, actual); 
+  }
+
+  ////////////////////////////////////////////////////////////////
 
   void equal_str(const string& expected, const string& actual) {
     has_active_test();
@@ -172,9 +226,15 @@ public:
 
   void equal_str(const string& name, const string& expected, const string& actual) {
     string result = assert(name, expected == actual);
-    cout << "  " << result << " string equality test " 
-         << to_pair(quote(expected), quote(actual)) << endl;
+    print_msg("string equality test", result, expected, actual); 
   }
+
+  void not_equal_str(const string& name, const string& expected, const string& actual) {
+    string result = assert(name, expected != actual);   
+    print_msg("double inequality test", result, expected, actual); 
+  }
+
+  ////////////////////////////////////////////////////////////////
 
   void display_all_stats() {
     int passed = 0;
@@ -220,5 +280,7 @@ public:
   }
 
 }; // class Test_master
+
+} // namespace cpptest
 
 #endif
