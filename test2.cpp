@@ -2,7 +2,7 @@
 
 #include "cpptest.h"
 
-Test_master master;
+cpptest::Test_master master;
 
 string pluralize(const string& s) {
     const int n = s.size();

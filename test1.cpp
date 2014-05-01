@@ -2,7 +2,7 @@
 
 #include "cpptest.h"
 
-Test_master master;
+cpptest::Test_master master;
 
 int twice(int x) {
     return 2 * x;

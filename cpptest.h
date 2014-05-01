@@ -1,5 +1,5 @@
-#ifndef cpptest
-#define cpptest
+#ifndef CPPTEST_H
+#define CPPTEST_H
 
 #include <iostream>
 #include <sstream>
