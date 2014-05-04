@@ -34,11 +34,15 @@ template<class T> string to_pair(const T& a, const T& b) {
   return "(" + to_str(a) + ", " + to_str(b) + ")";
 }
 
-template<class T>
-void print_msg(const string& msg, const string& result,
-               const T& expected, const T& actual) {
-      cout << "  " << result << ' ' << msg << ' '
-           << to_pair(expected, actual) << endl;  
+// template<class T>
+// void print_msg(const string& msg, const string& result,
+//                const T& expected, const T& actual) {
+//       cout << "  " << result << ' ' << msg << ' '
+//            << to_pair(expected, actual) << endl;  
+// }
+
+void print_msg(const string& result) {
+      cout << " " << result << endl;  
 }
 
 string quote(const string& x) {
@@ -66,6 +70,59 @@ int randint(int min, int max) {
   return randint(max - min) + min; 
 }
 
+// Trace is used to write simple debugging messages when a function is
+// called and when it ends. Indentation is used to align a function's
+// entering/exiting 
+//
+// To use it, put it as the first statement
+// of a function. For example:
+//
+//  int sum(int n) {
+//    Trace trace("sum(" + to_string(n) + ")");
+//    if (n <= 0) 
+//      return 0;
+//    else
+//      return n + sum(n - 1);
+//  }
+//
+// When sum(5) is called, this output is printed:
+//
+//  sum(5) entered ...
+//    sum(4) entered ...
+//      sum(3) entered ...
+//        sum(2) entered ...
+//          sum(1) entered ...
+//            sum(0) entered ...
+//            ... sum(0) exited
+//          ... sum(1) exited
+//        ... sum(2) exited
+//      ... sum(3) exited
+//    ... sum(4) exited
+//  ... sum(5) exited
+//  
+class Trace {
+  string msg;
+  string spaces;
+  static int indent;
+  const static int indent_increase;
+
+ public:
+  Trace(const string& prompt) : msg(prompt), spaces(indent, ' ') {
+    cout << spaces << msg << " entered ..." << endl;
+    indent += indent_increase;
+  }
+
+  ~Trace() {
+    cout << spaces << "... " << msg << " exited" << endl;
+    indent -= indent_increase;
+  }
+}; // class Trace
+
+// The variables indent and indent_increase are static, meaning there
+// is only one copy of each that is shared by all Trace objects. 
+int Trace::indent = 0;
+const int Trace::indent_increase = 2;
+
 //////////////////////////////////////////////////////////////////////////
 //
 // Test suite class.
@@ -78,16 +135,17 @@ public:
   int attempted;
   int passed;
   int failed;
+  int excepted;
   bool completed;
 
   Test_suite() 
     : name("<test-with-no-name>"), attempted(0), passed(0), failed(0), 
-      completed(false)
+      excepted(0), completed(false)
     { }
 
   Test_suite(const string& name) 
     : name(name), attempted(0), passed(0), failed(0), 
-      completed(false)
+      excepted(0), completed(false)
     { } 
 };
 
@@ -176,13 +234,15 @@ public:
   ////////////////////////////////////////////////////////////////
 
   void equal_int(int expected, int actual) {
+    Trace trace("equal_int_1" + to_pair(expected, actual));
     has_active_test();
     equal_int(active_test, expected, actual); 
   }
 
   void equal_int(const string& name, int expected, int actual) {
+    Trace trace("equal_int_2" + to_pair(expected, actual));
     string result = assert(name, expected == actual);
-    print_msg(string("int equality test"), result, expected, actual);
+    print_msg(result);
   }
 
   void not_equal_int(int expected, int actual) {
@@ -192,47 +252,47 @@ public:
 
   void not_equal_int(const string& name, int expected, int actual) {
     string result = assert(name, expected != actual);    
-    print_msg(string("int inequality test"), result, expected, actual);    
+    print_msg(result);    
   }
 
   ////////////////////////////////////////////////////////////////
 
-  void equal_double(double expected, double actual) {
-    has_active_test();
-    equal_double(active_test, expected, actual); 
-  }
+  // void equal_double(double expected, double actual) {
+  //   has_active_test();
+  //   equal_double(active_test, expected, actual); 
+  // }
 
-  void equal_double(const string& name, double expected, double actual) {
-    string result = assert(name, expected == actual);
-    print_msg("double equality test", result, expected, actual);
-  }
+  // void equal_double(const string& name, double expected, double actual) {
+  //   string result = assert(name, expected == actual);
+  //   print_msg("double equality test", result, expected, actual);
+  // }
 
-  void not_equal_double(double expected, double actual) {
-    has_active_test();
-    not_equal_double(active_test, expected, actual); 
-  }
+  // void not_equal_double(double expected, double actual) {
+  //   has_active_test();
+  //   not_equal_double(active_test, expected, actual); 
+  // }
 
-  void not_equal_double(const string& name, double expected, double actual) {
-    string result = assert(name, expected != actual);   
-    print_msg("double inequality test", result, expected, actual); 
-  }
+  // void not_equal_double(const string& name, double expected, double actual) {
+  //   string result = assert(name, expected != actual);   
+  //   print_msg("double inequality test", result, expected, actual); 
+  // }
 
   ////////////////////////////////////////////////////////////////
 
-  void equal_str(const string& expected, const string& actual) {
-    has_active_test();
-    equal_str(active_test, expected, actual); 
-  }
+  // void equal_str(const string& expected, const string& actual) {
+  //   has_active_test();
+  //   equal_str(active_test, expected, actual); 
+  // }
 
-  void equal_str(const string& name, const string& expected, const string& actual) {
-    string result = assert(name, expected == actual);
-    print_msg("string equality test", result, expected, actual); 
-  }
+  // void equal_str(const string& name, const string& expected, const string& actual) {
+  //   string result = assert(name, expected == actual);
+  //   print_msg("string equality test", result, expected, actual); 
+  // }
 
-  void not_equal_str(const string& name, const string& expected, const string& actual) {
-    string result = assert(name, expected != actual);   
-    print_msg("double inequality test", result, expected, actual); 
-  }
+  // void not_equal_str(const string& name, const string& expected, const string& actual) {
+  //   string result = assert(name, expected != actual);   
+  //   print_msg("double inequality test", result, expected, actual); 
+  // }
 
   ////////////////////////////////////////////////////////////////
 
@@ -280,6 +340,45 @@ public:
   }
 
 }; // class Test_master
+
+Test_master master;
+
+class New_test {
+  string name;
+
+public:
+  New_test(const string& name) {
+    master.new_test(name);
+    cout << "New_test(" << name << ") created ..." << endl;
+  }
+
+  ~New_test() {
+    master.test_completed();
+    cout << "... New_test(" << name << ") completed" << endl;
+  }
+}; // class New_test
+
+//
+// Macros
+//
+
+#define NEW_TEST(name)  \
+{                       \
+  New_test test(name);  \
+}
+
+#define EQUAL_INT(expected, actual)              \
+{                                                \
+  try {                                          \
+    cout << "  EQUAL_INT(" << #expected << ", " << #actual << "): ";  \
+    master.equal_int(expected, actual);          \
+  } catch (...) {                                \
+    cout << "EXCEPTION\n";                       \
+  }                                              \
+}
+
+    /*cout << "EQUAL_INT(" << #expected << ", "    \
+                         << #actual << ")" << endl; \*/
 
 } // namespace cpptest
 
