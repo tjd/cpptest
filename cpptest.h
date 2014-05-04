@@ -136,16 +136,16 @@ public:
   int passed;
   int failed;
   int excepted;
-  bool completed;
+  int num;
 
   Test_suite() 
     : name("<test-with-no-name>"), attempted(0), passed(0), failed(0), 
-      excepted(0), completed(false)
+      excepted(0), num(0)
     { }
 
   Test_suite(const string& name) 
     : name(name), attempted(0), passed(0), failed(0), 
-      excepted(0), completed(false)
+      excepted(0), num(0)
     { } 
 };
 
@@ -155,61 +155,84 @@ public:
 //
 //////////////////////////////////////////////////////////////////////////
 
+map<string, Test_suite> master;
+string current_test;
+
+bool lacks_test(const string& name) { return master.count(name) == 0; }
+bool has_test(const string& name) { return !lacks_test(name); }
+
+void new_test(const string& name) {
+  if (has_test(name)) {
+    error("Already have test suite named " + quote(name));
+  }
+  current_test = name;
+  master.emplace(name, Test_suite(name));
+  cout << "\nTest " << quote(name) << " created ..." << endl;
+}
+
+class New_test {
+  string name;
+public:
+  New_test(const string& name) : name(name) {
+    new_test(name);
+  }
+
+  ~New_test() {
+    cout << "... test suite " << quote(name) << " completed" << endl;
+  }
+};
+
+#define NEW_TEST(name) cpptest::New_test test(name); 
+
+#define EQUAL_INT(expected, actual)              \
+{                                                \
+  if (cpptest::current_test.empty()) cpptest::error("no current test");  \
+  cpptest::Test_suite& ts = cpptest::master[cpptest::current_test];      \
+  ts.num++;                                      \
+  string result;                                 \
+  try {                                          \
+    cout << "   " << ts.num << ". ";             \
+    cout << "EQUAL_INT(" << #expected << ", " << #actual << "): ";    \
+    result = (expected == actual) ? "PASSED" : "FAILED";              \
+  } catch (...) {                                \
+    result = "EXCEPTION";                        \
+  }                                              \
+  cout << result << endl;                        \
+}
+
+} // namespace cpptest
+
+
+#endif
+
+/*
 class Test_master {
-  map<string, Test_suite> stats;
-  string active_test;
+  // map<string, Test_suite> stats;
+  // string active_test;
 
-  void has_test(const string& name) {
-    error_if(stats.count(name) == 0, "no such test: " + quote(name));
-  }
+  // void has_test(const string& name) {
+  //   error_if(stats.count(name) == 0, "no such test: " + quote(name));
+  // }
 
-  void lacks_test(const string& name) {
-    error_if(stats.count(name) > 0, "duplicate test: " + quote(name));
-  }
+  // void lacks_test(const string& name) {
+  //   error_if(stats.count(name) > 0, "duplicate test: " + quote(name));
+  // }
 
-  string assert(const string& name, bool expr) {
-    has_test(name);
-    error_if(stats[name].completed, "test suite " + quote(name) + " completed");
-    stats[name].attempted++;
-    if (expr) {
-      stats[name].passed++;
-      return "PASSED";
-    } else {
-      stats[name].failed++;
-      return "FAILED";
-    }
-  }
+  // string assert(const string& name, bool expr) {
+  //   has_test(name);
+  //   error_if(stats[name].completed, "test suite " + quote(name) + " completed");
+  //   stats[name].attempted++;
+  //   if (expr) {
+  //     stats[name].passed++;
+  //     return "PASSED";
+  //   } else {
+  //     stats[name].failed++;
+  //     return "FAILED";
+  //   }
+  // }
 
 public:
   Test_master() : stats(), active_test("") { }
-
-  void new_test(const string& name) {
-    lacks_test(name);
-    error_if(name == "", "test name cannot be empty string");
-    stats.emplace(name, Test_suite(name));
-    cout << "\nTest " << quote(name) << " created ..." << endl;
-    active_test = name;
-  }
-
-  void test_completed() {
-    has_active_test();
-    test_completed(active_test);
-  }
-
-  void test_completed(const string& name) {
-    has_test(name);
-    int attempted = stats[name].attempted;
-    int passed = stats[name].passed;
-    int failed = stats[name].failed;
-    stats[name].completed = true;
-    printf("... test \"%s\" completed ", name.c_str());
-    printf("(%d attempted, %d passed, %d failed)\n", attempted, passed, failed);
-    active_test = "";
-  }
-
-  void has_active_test() {
-    error_if(active_test == "", "no active test");
-  }
 
   void is_true(bool expr) {
     has_active_test();
@@ -367,6 +390,7 @@ public:
   New_test test(name);  \
 }
 
+
 #define EQUAL_INT(expected, actual)              \
 {                                                \
   try {                                          \
@@ -377,9 +401,6 @@ public:
   }                                              \
 }
 
-    /*cout << "EQUAL_INT(" << #expected << ", "    \
-                         << #actual << ")" << endl; \*/
+*/
 
-} // namespace cpptest
 
-#endif

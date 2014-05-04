@@ -2,24 +2,17 @@
 
 #include "cpptest.h"
 
-using cpptest::master;
-using cpptest::New_test;
-
 int twice(int x) {
+    if (x == -1) cpptest::error("can't call twice on -1");
     return 2 * x;
 }
 
 void twice_test() {
     NEW_TEST("twice");
-    // cpptest::New_test test("twice");
-    // master.new_test("twice");
 
-    // master.equal_int(4, twice(2));
-    // master.not_equal_int(4, twice(3));
     EQUAL_INT(4, twice(2));
     EQUAL_INT(4, twice(3));
-    
-    // master.test_completed();
+    EQUAL_INT(1, twice(-1));
 }
 
 int main() {
@@ -27,5 +20,5 @@ int main() {
 
     twice_test();
 
-    master.display_all_stats();
+    // master.display_all_stats();
 }
