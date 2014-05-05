@@ -44,5 +44,5 @@ int main() {
     twice_test();
     pluralize_test();
 
-    // master.display_all_stats();
+    cpptest::display_all_stats();
 }

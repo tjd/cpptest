@@ -9,6 +9,7 @@ double safe_invert(double x) {
 
 void safe_invert_test() {
     NEW_TEST("safe_invert");
+    
     EQUAL_DOUBLE(0.5, safe_invert(2));
     EQUAL_DOUBLE(0.3, safe_invert(3));
     EQUAL_DOUBLE(0.3333333, safe_invert(3));

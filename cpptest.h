@@ -126,14 +126,14 @@ public:
 
 #define NEW_TEST(name) cpptest::New_test test(name); 
 
-#define EQUAL_INT(expected, actual)              \
-{                                                \
+#define ASSERT(test_name, expected, actual, test)                        \
+{                                                                        \
   if (cpptest::current_test.empty()) cpptest::error("no current test");  \
   cpptest::Test_suite& ts = cpptest::master[cpptest::current_test];      \
   ts.attempted++;                                \
   string result;                                 \
   try {                                          \
-    if (expected == actual) {                    \
+    if (test) {                                  \
       result = "   PASSED";                      \
       ts.passed++;                               \
     } else {                                     \
@@ -144,89 +144,40 @@ public:
     result = "EXCEPTION";                        \
     ts.excepted++;                               \
   }                                              \
-    cout << "   " << ts.attempted << ". "        \
-         << result                               \
-         << ": EQUAL_INT(" << #expected << ", " << #actual << ")"    \
-         << endl;                                \
+  cout << "   " << ts.attempted << ". "          \
+       << result                                 \
+       << ": " << test_name << "(" << #expected << ", " \
+       << #actual << ")"                                \
+       << endl;                                         \
 }
 
-#define EQUAL_STR(expected, actual)              \
-{                                                \
-  if (cpptest::current_test.empty()) cpptest::error("no current test");  \
-  cpptest::Test_suite& ts = cpptest::master[cpptest::current_test];      \
-  ts.attempted++;                                      \
-  string result;                                 \
-  try {                                          \
-    cout << "   " << ts.attempted << ". ";             \
-    cout << "EQUAL_STR(" << #expected << ", " << #actual << "): ";    \
-    if (expected == actual) {                    \
-      result = "PASSED";                         \
-      ts.passed++;                               \
-    } else {                                     \
-      result = "FAILED";                         \
-      ts.failed++;                               \
-    }                                            \
-  } catch (...) {                                \
-    result = "EXCEPTION";                        \
-    ts.excepted++;                               \
-  }                                              \
-  cout << result << endl;                        \
+#define EQUAL_INT(expected, actual)                           \
+{                                                             \
+  ASSERT("EQUAL_INT", expected, actual, expected == actual);  \
 }
 
-#define EQUAL_DOUBLE(expected, actual)           \
-{                                                \
-  if (cpptest::current_test.empty()) cpptest::error("no current test");  \
-  cpptest::Test_suite& ts = cpptest::master[cpptest::current_test];      \
-  ts.attempted++;                                \
-  string result;                                 \
-  try {                                          \
-    cout << "   " << ts.attempted << ". ";       \
-    cout << "EQUAL_DOUBLE(" << #expected << ", " << #actual << "): ";    \
-    double diff = fabs(expected - actual);       \
-    if (diff < cpptest::delta) {                 \
-      result = "PASSED";                         \
-      ts.passed++;                               \
-    } else {                                     \
-      result = "FAILED";                         \
-      ts.failed++;                               \
-    }                                            \
-  } catch (...) {                                \
-    result = "EXCEPTION";                        \
-    ts.excepted++;                               \
-  }                                              \
-  cout << result << endl;                        \
+#define EQUAL_STR(expected, actual)                           \
+{                                                             \
+  ASSERT("EQUAL_STR", expected, actual, expected == actual);  \
 }
 
-#define IS_TRUE(actual)                          \
-{                                                \
-  if (cpptest::current_test.empty()) cpptest::error("no current test");  \
-  cpptest::Test_suite& ts = cpptest::master[cpptest::current_test];      \
-  ts.attempted++;                                \
-  string result;                                 \
-  try {                                          \
-    cout << "   " << ts.attempted << ". ";       \
-    cout << "IS_TRUE(" << #actual << "): ";      \
-    result = actual ? "PASSED" : "FAILED";       \
-    if (actual) {                                \
-      result = "PASSED";                         \
-      ts.passed++;                               \
-    } else {                                     \
-      result = "FAILED";                         \
-      ts.failed++;                               \
-    }                                            \
-  } catch (...) {                                \
-    result = "EXCEPTION";                        \
-    ts.excepted++;                               \
-  }                                              \
-  cout << result << endl;                        \
+#define EQUAL_DOUBLE(expected, actual)               \
+{                                                    \
+  ASSERT("EQUAL_DOUBLE", expected, actual,           \
+         fabs(expected - actual) < cpptest::delta);  \
 }
+
+#define IS_TRUE(actual)                               \
+{                                                     \
+  ASSERT("IS_TRUE", true, actual, actual);            \
+}  
 
 
 void display_all_stats() {
   cout << "\n----------------------------------------------------------------\n"
        << " Final Summary of All Tests \n"
        << "----------------------------------------------------------------\n";
-
+       
   int attempted = 0;
   int passed = 0;
   int failed = 0;

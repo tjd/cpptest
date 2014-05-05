@@ -20,5 +20,5 @@ int main() {
 
     twice_test();
 
-    // master.display_all_stats();
+    cpptest::display_all_stats();
 }
