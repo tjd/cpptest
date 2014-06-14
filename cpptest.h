@@ -98,7 +98,7 @@ public:
 map<string, Test_suite> master;
 string current_test;
 
-const double delta = 0.00001;
+const double epsilon = 0.00001;
 
 bool lacks_test(const string& name) { return master.count(name) == 0; }
 bool has_test(const string& name) { return !lacks_test(name); }
@@ -179,16 +179,16 @@ public:
   ASSERT("EQUAL_string", expected, actual, expected == actual);  \
 }
 
-#define EQUAL_DOUBLE(expected, actual)               \
-{                                                    \
-  ASSERT("EQUAL_DOUBLE", expected, actual,           \
-         fabs(expected - actual) < cpptest::delta);  \
+#define EQUAL_DOUBLE(expected, actual)                 \
+{                                                      \
+  ASSERT("EQUAL_DOUBLE", expected, actual,             \
+         fabs(expected - actual) < cpptest::epsilon);  \
 }
 
-#define EQUAL_double(expected, actual)               \
-{                                                    \
-  ASSERT("EQUAL_double", expected, actual,           \
-         fabs(expected - actual) < cpptest::delta);  \
+#define EQUAL_double(expected, actual)                 \
+{                                                      \
+  ASSERT("EQUAL_double", expected, actual,             \
+         fabs(expected - actual) < cpptest::epsilon);  \
 }
 
 #define EQUAL_double_eps(expected, actual, eps)      \
