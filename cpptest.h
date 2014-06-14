@@ -219,10 +219,11 @@ public:
 
 
 void display_all_stats() {
-  cout << "\n----------------------------------------------------------------\n"
+  const string bar(64, '-'); 
+  cout << '\n' << bar << '\n'
        << " Final Summary of All Tests \n"
-       << "----------------------------------------------------------------\n";
-       
+       << bar << '\n';
+
   int attempted = 0;
   int passed = 0;
   int failed = 0;
@@ -263,7 +264,9 @@ void display_all_stats() {
   printf("            Total cases passed: %2d (%.1f%%)\n", passed, pass_pct);
   printf("            Total cases failed: %2d (%.1f%%)\n", failed, 100 - pass_pct);
 
-  cout << endl;
+  cout << bar << '\n'
+       << "version: " << version 
+       << endl;
 }
 
 } // namespace cpptest
