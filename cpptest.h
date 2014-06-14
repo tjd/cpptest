@@ -17,7 +17,7 @@ using namespace std;
 
 namespace cpptest {
 
-const int version = 3;
+const string version = "three";
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -159,6 +159,7 @@ public:
        << endl;                                         \
 }
 
+// deprecated
 #define EQUAL_INT(expected, actual)                           \
 {                                                             \
   ASSERT("EQUAL_INT", expected, actual, expected == actual);  \
@@ -169,6 +170,7 @@ public:
   ASSERT("EQUAL_int", expected, actual, expected == actual);  \
 }
 
+// deprecated
 #define EQUAL_STR(expected, actual)                           \
 {                                                             \
   ASSERT("EQUAL_STR", expected, actual, expected == actual);  \
@@ -179,6 +181,7 @@ public:
   ASSERT("EQUAL_string", expected, actual, expected == actual);  \
 }
 
+// deprecated
 #define EQUAL_DOUBLE(expected, actual)                 \
 {                                                      \
   ASSERT("EQUAL_DOUBLE", expected, actual,             \
@@ -197,6 +200,7 @@ public:
          fabs(expected - actual) < eps);             \
 }
 
+// deprecated
 #define IS_TRUE(actual)                               \
 {                                                     \
   ASSERT("IS_TRUE", true, actual, actual);            \
@@ -207,6 +211,7 @@ public:
   ASSERT("IS_true", true, actual, actual);            \
 }  
 
+// deprecated
 #define IS_FALSE(actual)                              \
 {                                                     \
   ASSERT("IS_FALSE", false, actual, actual);          \
@@ -265,7 +270,7 @@ void display_all_stats() {
   printf("            Total cases failed: %2d (%.1f%%)\n", failed, 100 - pass_pct);
 
   cout << bar << '\n'
-       << "version: " << version 
+       << "cpptest version: " << version 
        << endl;
 }
 
