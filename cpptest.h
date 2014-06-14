@@ -1,6 +1,12 @@
 #ifndef CPPTEST_H
 #define CPPTEST_H
 
+//
+// Note: Test macros with all-capital type names (like TEST_DOUBLE) are
+// deprecated and should be replaced by the equivalent macros with lowercase
+// names (like TEST_double).
+//
+
 #include <iostream>
 #include <sstream>
 #include <map>
@@ -10,6 +16,8 @@
 using namespace std;
 
 namespace cpptest {
+
+const int version = 3;
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -156,9 +164,19 @@ public:
   ASSERT("EQUAL_INT", expected, actual, expected == actual);  \
 }
 
+#define EQUAL_int(expected, actual)                           \
+{                                                             \
+  ASSERT("EQUAL_int", expected, actual, expected == actual);  \
+}
+
 #define EQUAL_STR(expected, actual)                           \
 {                                                             \
   ASSERT("EQUAL_STR", expected, actual, expected == actual);  \
+}
+
+#define EQUAL_string(expected, actual)                           \
+{                                                                \
+  ASSERT("EQUAL_string", expected, actual, expected == actual);  \
 }
 
 #define EQUAL_DOUBLE(expected, actual)               \
@@ -167,10 +185,37 @@ public:
          fabs(expected - actual) < cpptest::delta);  \
 }
 
+#define EQUAL_double(expected, actual)               \
+{                                                    \
+  ASSERT("EQUAL_double", expected, actual,           \
+         fabs(expected - actual) < cpptest::delta);  \
+}
+
+#define EQUAL_double_eps(expected, actual, eps)      \
+{                                                    \
+  ASSERT("EQUAL_double_eps", expected, actual,       \
+         fabs(expected - actual) < eps);             \
+}
+
 #define IS_TRUE(actual)                               \
 {                                                     \
   ASSERT("IS_TRUE", true, actual, actual);            \
 }  
+
+#define IS_true(actual)                               \
+{                                                     \
+  ASSERT("IS_true", true, actual, actual);            \
+}  
+
+#define IS_FALSE(actual)                              \
+{                                                     \
+  ASSERT("IS_FALSE", false, actual, actual);          \
+} 
+
+#define IS_false(actual)                              \
+{                                                     \
+  ASSERT("IS_false", false, actual, actual);          \
+}
 
 
 void display_all_stats() {

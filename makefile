@@ -14,7 +14,7 @@ CPPFLAGS = -std=c++11 -Wall -Wextra -Werror -Wfatal-errors -Wno-sign-compare -Wn
 
 all: tests
 
-tests: test1 test2
+tests: test1 test2 test3
 
 clean:
-	rm -f test1 test2
+	rm -f test1 test2 test3
