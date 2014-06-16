@@ -211,17 +211,6 @@ public:
   ASSERT("IS_true", true, actual, actual);            \
 }  
 
-// deprecated
-#define IS_FALSE(actual)                              \
-{                                                     \
-  ASSERT("IS_FALSE", false, actual, actual);          \
-} 
-
-#define IS_false(actual)                              \
-{                                                     \
-  ASSERT("IS_false", false, actual, actual);          \
-}
-
 
 void display_all_stats() {
   const string bar(64, '-'); 
