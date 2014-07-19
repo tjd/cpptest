@@ -17,7 +17,7 @@ using namespace std;
 
 namespace cpptest {
 
-const string version = "three";
+const string version = "3.2";
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -155,8 +155,9 @@ public:
   cout << "   " << ts.attempted << ". "          \
        << result                                 \
        << ": " << test_name << "(" << #expected << ", " \
-       << #actual << ")"                                \
-       << endl;                                         \
+       << #actual << ")";                               \
+  if (result == "   FAILED") cout << ", actual=<" << (actual) << ">"; \
+  cout << endl;                                         \
 }
 
 // deprecated
@@ -247,7 +248,7 @@ void display_all_stats() {
 
   cout << endl;
   double sp_pct = 100.0 * suites_passed / master.size();
-  printf("        Total suites attempted: %2d\n", master.size());
+  printf("        Total suites attempted: %2d\n", int(master.size()));
   printf("Total suites completely passed: %2d (%.1f%%)\n", suites_passed, sp_pct);
   printf(" Total suites partially failed: %2d (%.1f%%)\n\n", 
                                           master.size() - suites_passed,
